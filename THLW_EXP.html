@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel = "stylesheet" type = "text/css" href = "css/pat.css">
+	<title>Player EXP Calculator</title>
+</head>
+<body>
+	<div class = "formContainer">
+		<form id = "userForm">
+			<div class = "input required">
+				<span class = "labelContainer">
+					<label for = "maxLvl">Max Level</label>
+				</span>
+				<input type = "text" name = "maxLvl" id = "maxLvl" value = "300">
+			</div>
+			<div class = "input">
+				<button type = "button" form = "userForm" onclick = "calc_exp()">Calculate</button>
+			</div>
+			<div class = "input">
+				<a id = "result" href = "#"></a>
+			</div>
+		</form>
+	</div>
+	<div class = "tableContainer">
+		<table class = "displayTable" id = "expTable">
+			<tr class = "columnLabel" id = "lvl0">
+				<th>Level</th>
+				<th>EXP to next Level</th>
+				<th>Accumulated EXP</th>
+				<th>Max SP</th>
+				<th>Max Coin</th>
+			</tr>
+		</table>
+	</div>
+	<script src = "js/exp_calc.js"></script>
+</body>

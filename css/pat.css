@@ -1,0 +1,59 @@
+#userForm {
+	margin: 10px;
+}
+
+.formContainer {
+	margin-bottom: 10px;
+}
+
+.labelContainer {
+	width: 20%;
+	display: inline-block;
+}
+
+.formContainer {
+	width: 50%;
+	border: 1px solid black;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.required > input {
+	background-color: #ABCDEF;
+	color: black;
+}
+
+.displayTable {
+	border-spacing: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+}
+
+.displayTable th, .displayTable td {
+	text-align: center;
+	padding: 6px 10px;
+	border: 1px solid black;
+}
+
+.displayTable th {
+	background-color: #FFFE7A;
+	position: sticky;
+	top: 0;
+}
+
+.displayTable tr:nth-child(even) {
+	background-color: #FFFFFF;
+}
+
+.displayTable tr:nth-child(odd) {
+	background-color: #E0F7FA;
+}
+
+.input {
+	margin-bottom: 5px;
+}
+
+.tableContainer {
+	max-height: 500px;
+}
