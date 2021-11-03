@@ -10,11 +10,11 @@ function addRow(rowNum){
 	const row = table.insertRow(rowNum);
 	row.id = "lvl" + rowNum;
 	row.insertCell(0).innerHTML = rowNum;
-	row.insertCell(1).innerHTML = exp_val[rowNum];
+	row.insertCell(1).innerHTML = exp_val[rowNum].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	accumulated_exp += exp_val[rowNum];
-	row.insertCell(2).innerHTML = accumulated_exp;
-	row.insertCell(3).innerHTML = (rowNum + 9) * 100;
-	row.insertCell(4).innerHTML = (rowNum + 9) * 600;
+	row.insertCell(2).innerHTML = accumulated_exp.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	row.insertCell(3).innerHTML = ((rowNum + 9) * 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	row.insertCell(4).innerHTML = ((rowNum + 9) * 600).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	return 1;
 }
 
