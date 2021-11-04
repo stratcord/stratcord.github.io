@@ -11,26 +11,33 @@
 	</div>
 	<div class = "collapsible">
 		<button type = "button" class = "collapsibleButton" onclick = "toggleCollapse('collapse1')" id = "button_collapse1">Information</button>
-		<div class = "collapsibleContent hidden" id = "collapse1">
-			<p>The "formula" to calculate the amount of EXP required for each level changes throughout the leveling process.</p>
-			<p><b>However</b>, it only change during some "important checkpoints"; namely <u><b>Level 15</b></u>, <u><b>Level 20</b></u>, <u><b>Level 35</b></u>, <u><b>Level 50</b></u>, and <u><b>Level 70</b></u>.</p>
-			<p>As such, the algorithm to calculate the amount of EXP required can be described as:</p>
-			<p>&nbsp;&nbsp;&nbsp;&nbsp;+ <b>Level 1 - 15</b>: Every level require <u><b>exactly</b></u> 20 EXP.</p>
-			<p>&nbsp;&nbsp;&nbsp;&nbsp;+ <b>Level 16 - 20</b>: Every level require 100 EXP <u><b>more than the last level</b></u>.</p>
-			<p>&nbsp;&nbsp;&nbsp;&nbsp;+ <b>Level 21 - 35</b>: Every level require 120 EXP <u><b>more than the last level</b></u>.</p>
-			<p>&nbsp;&nbsp;&nbsp;&nbsp;+ <b>Level 36 - 50</b>: Every level require 140 EXP <u><b>more than the last level</b></u>.</p>
-			<p>&nbsp;&nbsp;&nbsp;&nbsp;+ <b>Level 51 - 70</b>: Every level require <b>(lvl * 5)</b> EXP [<i>rounded to the next ten</i>] <u><b>more than the last level</b></u>.</p>
-			<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E.g: Level 51 require (51 * 5 = 255, rounded to 260) more EXP compared to level 50.</p>
-			<p>&nbsp;&nbsp;&nbsp;&nbsp;+ <b>Level 71 or higher</b>:</p>
-			<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* There's a <b><u>hidden variable</u></b> that represent the difference between the EXP required for the current level in comparison to the previous level.</p>
-			<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* This <b><u>hidden variable</u></b> starts at 720 at level 71 and is increased by <i>{value1}</i> every level, and <i>{value20}</i> every 20 levels.</p>
-			<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Additionally, every 20 levels, <i>{value1}</i> is <b><u>increased by 10</u></b>, while <i>{value20}</i> is <b><u>increased by 200</u></b>. This increment happen <b><u>before</u></b> the calculation for the <b><u>hidden variable</u></b>.</p>
-			<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* At level 71, <b><u>hidden variable</u></b> = 720, <i>{value1}</i> = 10, <i>{value20}</i> = 710.</p>
+		<div class = "collapsibleContent" id = "collapse1">
+			<p>School <b><u>base EXP</u></b> scale with your <b><u>Player Level</u></b>.</p>
+			<p>It can be calculated by <i>EXP = 240 + 12 * <b>player_lvl</b></i>.</p>
+			<p>School give EXP and speed up morale gain <u>whether or not</u> you use food on it.</p>
+			<p>Food use only give extra EXP (x5 the amount gained) to your units.</p>
+			<br/>
+			<p>- Food buffs (<b>Wagashi</b>, <b>Youkan Jelly</b>, and <b>Unagi Lunch</b>) scale <u>with each other</u> additively.</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;+ This also mean you can get a maximum of 35% extra EXP from food buffs.</p>
+			<p>- Having no food give you a 0.2x multiplier to your overall EXP gain as a penalty.</p>
+			<p>- School EXP events give you bonus EXP according to the event content, as a final multiplier.</p>
+			<br/>
+			<p>- Having multiple units in school increases the amount of food consumed and decrease the individual EXP each unit receive.</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;+ Do note that, however, the overall EXP gain is increased.</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;+ To be precise, the multipliers are as follow:</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* 1 Unit: 1.0x</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* 2 Units: 0.9x</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* 3 Units: 0.8x</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* 4 Units: 0.7x</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* 5 Units: 0.64x</p>
+			<br/>
+			<p>Food usage and EXP is calculated every 15 seconds, or 240 times per hour.</p>
 		</div>
 	</div>
 	<div class = "pageContainer">
 		<div class = "formContainer">
 			<form id = "userForm">
+				<button type = "submit" disabled style = "display: none" aria-hidden = "true"></button>
 				<div class = "input required">
 					<span class = "labelContainer">
 						<label for = "playerLvl">Player Level</label>
@@ -48,7 +55,7 @@
 				</div>
 				<div class = "input">
 					<span class = "labelContainer">
-						<label for = "Buff">Food buffs</label>
+						<label for = "buff">Food buffs</label>
 					</span>
 					<input type = "checkbox" name = "wagashi" id = "wagashi">
 					<label for = "wagashi">Wagashi</label>
@@ -58,7 +65,18 @@
 					<label for = "unagilunch">Unagi Lunch</label>
 				</div>
 				<div class = "input">
-					<button type = "button" form = "userForm" onclick = "calc_exp()">Calculate</button>
+					<span class = "labelContainer">
+						<label for = "event">School EXP Events</label>
+					</span>
+					<input type = "radio" name = "event" id = "noevent" checked = "true">
+					<label for = "noevent">None</label>
+					<input type = "radio" name = "event" id = "x2">
+					<label for = "x2">x2 School EXP</label>
+					<input type = "radio" name = "event" id = "x3">
+					<label for = "x3">x3 School EXP</label>
+				</div>
+				<div class = "input">
+					<button type = "button" form = "userForm" onclick = "calc_school()">Calculate</button>
 				</div>
 			</form>
 		</div>
@@ -113,6 +131,6 @@
 			</table>
 		</div>
 	</div>
-	<script src = "js/exp_calc.js"></script>
+	<script src = "js/school_calc.js"></script>
 	<script src = "js/collapsible.js"></script>
 </body>

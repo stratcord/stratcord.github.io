@@ -44,11 +44,14 @@ For (lvl := 71 to 300){
 	inc := inc + val1;
 }</pre>
 			</div>
+			<p>Note that due to the natural limitation of time and resources, the formula is not guaranteed to be correct for <b>all levels</b>.</p>
+			<p>However, it's still correct so far at level 250+, so it's pretty safe to say that the algorithm is correct and won't be changed in the forseeable future.</p>
 		</div>
 	</div>
 	<div class = "pageContainer">
 		<div class = "formContainer">
 			<form id = "userForm">
+				<button type = "submit" disabled style = "display: none" aria-hidden = "true"></button>
 				<div class = "input required">
 					<span class = "labelContainer">
 						<label for = "maxLvl">Max Level</label>
