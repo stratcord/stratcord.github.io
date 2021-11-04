@@ -1,0 +1,35 @@
+.collapsible {
+	margin: 20px auto;
+	width: 80%;
+}
+
+.collapsibleButton {
+	background-color: #CCCCCC;
+	color: #222222;
+	cursor: pointer;
+	padding: 10px;
+	width: 100%;
+	border: none;
+	text-align: center;
+	outline: none;
+}
+
+.expanded, .collapsibleButton:hover {
+	background-color: #AAAAAA;
+}
+
+.collapsibleContent {
+	padding: 0px 18px;
+	overflow: scroll;
+	background-color: #B7E9F7;
+	max-height: 300px;
+	font-family: monospace;
+}
+
+.hidden {
+	display: none;
+}
+
+.collapsibleContent p {
+	margin: 10px 0px;
+}

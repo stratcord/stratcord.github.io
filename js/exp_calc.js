@@ -5,9 +5,16 @@ let level_exp_inc_per_1 = 0;
 let level_exp_inc_per_20 = 510;
 let accumulated_exp = 0;
 
+function fixTable(){
+	document.getElementById("expTable").style.borderSpacing = "1px";
+	setTimeout(function(){
+		document.getElementById("expTable").style.borderSpacing = "";
+	},0);
+}
+
 function addRow(rowNum){
-	const table = document.getElementById("expTable");
-	const row = table.insertRow(rowNum);
+	const table = document.getElementById("expTable").children[1];
+	const row = table.insertRow(rowNum - 1);
 	row.id = "lvl" + rowNum;
 	row.insertCell(0).innerHTML = rowNum;
 	row.insertCell(1).innerHTML = exp_val[rowNum].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -15,6 +22,9 @@ function addRow(rowNum){
 	accumulated_exp += exp_val[rowNum];
 	row.insertCell(3).innerHTML = ((rowNum + 9) * 100).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	row.insertCell(4).innerHTML = ((rowNum + 9) * 600).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	row.insertCell(5).innerHTML = ((rowNum + 20) * 12).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	row.insertCell(6).innerHTML = (500 + rowNum * 3).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	row.insertCell(7).innerHTML = (Math.min(rowNum, 100) * 0.2 + 23.8).toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	return 1;
 }
 
@@ -61,5 +71,6 @@ function calc_exp(){
 	}
 	document.getElementById("result").innerHTML = "Level " + new_max;
 	document.getElementById("result").href = "#lvl" + (new_max-1);
+	fixTable();
 	return exp_val[new_max];
 }

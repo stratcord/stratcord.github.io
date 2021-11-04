@@ -26,24 +26,6 @@
 			<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* This <b><u>hidden variable</u></b> starts at 720 at level 71 and is increased by <i>{value1}</i> every level, and <i>{value20}</i> every 20 levels.</p>
 			<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Additionally, every 20 levels, <i>{value1}</i> is <b><u>increased by 10</u></b>, while <i>{value20}</i> is <b><u>increased by 200</u></b>. This increment happen <b><u>before</u></b> the calculation for the <b><u>hidden variable</u></b>.</p>
 			<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* At level 71, <b><u>hidden variable</u></b> = 720, <i>{value1}</i> = 10, <i>{value20}</i> = 710.</p>
-			<p>&nbsp;&nbsp;&nbsp;&nbsp;Pseudocode:</p>
-			<div class = "code">
-				<pre>
-exp[70] := 10520;
-val1 := 10;
-val20 := 710;
-inc := 720;
-
-For (lvl := 71 to 300){
-	exp[lvl] := exp[lvl - 1] + inc;
-	If (lvl - 70) is divisible by 20 {
-		val1 := val1 + 10;
-		val20 := val20 + 200;
-		inc := inc + val20;
-	}
-	inc := inc + val1;
-}</pre>
-			</div>
 		</div>
 	</div>
 	<div class = "pageContainer">
@@ -51,33 +33,80 @@ For (lvl := 71 to 300){
 			<form id = "userForm">
 				<div class = "input required">
 					<span class = "labelContainer">
-						<label for = "maxLvl">Max Level</label>
+						<label for = "playerLvl">Player Level</label>
 					</span>
-					<input type = "number" name = "maxLvl" id = "maxLvl" value = "300" min = "1">
+					<input type = "number" name = "playerLvl" id = "playerLvl" value = "100" min = "1">
+				</div>
+				<div class = "input">
+					<span class = "labelContainer">
+						<label for = "food">Food</label>
+					</span>
+					<input type = "radio" name = "food" id = "hasFood" value = "hasFood" checked = "true">
+					<label for = "hasFood">Yes</label>
+					<input type = "radio" name = "food" id = "noFood" value = "noFood">
+					<label for = "noFood">No</label>
+				</div>
+				<div class = "input">
+					<span class = "labelContainer">
+						<label for = "Buff">Food buffs</label>
+					</span>
+					<input type = "checkbox" name = "wagashi" id = "wagashi">
+					<label for = "wagashi">Wagashi</label>
+					<input type = "checkbox" name = "youkanjelly" id = "youkanjelly">
+					<label for = "youkanjelly">Youkan Jelly</label>
+					<input type = "checkbox" name = "unagilunch" id = "unagilunch">
+					<label for = "unagilunch">Unagi Lunch</label>
 				</div>
 				<div class = "input">
 					<button type = "button" form = "userForm" onclick = "calc_exp()">Calculate</button>
 				</div>
-				<div class = "input">
-					<a id = "result" href = "#"></a>
-				</div>
 			</form>
 		</div>
 		<div class = "tableContainer">
-			<table class = "displayTable" id = "expTable">
+			<table class = "displayTable" id = "schoolTable">
 				<thead>
-					<tr class = "columnLabel" id = "lvl0">
-						<th>Level</th>
-						<th>EXP to next Level</th>
-						<th>Accumulated EXP</th>
-						<th>Max SP</th>
-						<th>Max Coin</th>
-						<th>School EXP per Hour</th>
-						<th>SP gain from refill</th>
-						<th>Limited Errand SP cost</th>
+					<tr class = "columnLabel">
+						<th colspan = "5">Per Hour (FP = Food Points)</th>
+						<th colspan = "5">Per 15 seconds (FP = Food Points)</th>
+					</tr>
+					<tr class = "columnLabel noBottom">
+						<th>1 Unit</th>
+						<th>2 Units</th>
+						<th>3 Units</th>
+						<th>4 Units</th>
+						<th>5 Units</th>
+						<th>1 Unit</th>
+						<th>2 Units</th>
+						<th>3 Units</th>
+						<th>4 Units</th>
+						<th>5 Units</th>
+					</tr>
+					<tr class = "columnLabel noTop">
+						<th>(1200 FP)</th>
+						<th>(2160 FP)</th>
+						<th>(2880 FP)</th>
+						<th>(3360 FP)</th>
+						<th>(3840 FP)</th>
+						<th>(5 FP)</th>
+						<th>(9 FP)</th>
+						<th>(12 FP)</th>
+						<th>(14 FP)</th>
+						<th>(16 FP)</th>
 					</tr>
 				</thead>
 				<tbody>
+					<tr>
+						<td>0</td>
+						<td>0</td>
+						<td>0</td>
+						<td>0</td>
+						<td>0</td>
+						<td>0</td>
+						<td>0</td>
+						<td>0</td>
+						<td>0</td>
+						<td>0</td>
+					</tr>
 				</tbody>
 				<tfoot>
 				</tfoot>
