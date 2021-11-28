@@ -82,3 +82,113 @@ html {
 .noTop th, .noTop td {
 	border-top: 0px;
 }
+
+.ele_fire td, .ele_fire input, .ele_fire select {
+	background-color: #CC372B;
+	color: white;
+	font-weight: normal;
+}
+
+.ele_water td, .ele_water input, .ele_water select {
+	background-color: #2FADA9;
+	color: white;
+	font-weight: normal;
+}
+
+.ele_wood td, .ele_wood input, .ele_wood select {
+	background-color: #5BA33F;
+	color: white;
+	font-weight: normal;
+}
+
+.ele_metal td, .ele_metal input, .ele_metal select {
+	background-color: #CA9D2B;
+	color: white;
+	font-weight: normal;
+}
+
+.ele_earth td, .ele_earth input, .ele_earth select {
+	background-color: #905527;
+	color: white;
+	font-weight: normal;
+}
+
+.ele_sun td, .ele_sun input, .ele_sun select {
+	background-color: #D0B146;
+	color: white;
+	font-weight: normal;
+}
+
+.ele_moon td, .ele_moon input, .ele_moon select {
+	background-color: #775C93;
+	color: white;
+	font-weight: normal;
+}
+
+.ele_star td, .ele_star input, .ele_star select {
+	background-color: #AE9C76;
+	color: white;
+	font-weight: normal;
+}
+
+.ele_non td, .ele_non input, .ele_non select {
+	background-color: gray;
+	color: white;
+	font-weight: normal;
+}
+
+.ele_blank td, .ele_blank input, .ele_blank select {
+	background-color: white;
+	color: black;
+	font-weight: normal;
+}
+
+.inputBig {
+	font-size: 1.5em;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 15px;
+	display: block;
+	width: 60%;
+	text-align: center;
+}
+
+.shortInput {
+	width: 50px;
+}
+
+.mediumInput {
+	width: 100px;
+}
+
+.longInput {
+	width: 300px;
+}
+
+.table_inputLine input, .table_inputLine select {
+	text-align: center;
+	font-size: 1.1em;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+	-moz-appearance: textfield;
+}
+
+#parsing_field {
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 15px;
+	display: block;
+}
+
+.controlContainer {
+	display: flex;
+}

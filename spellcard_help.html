@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel = "stylesheet" type = "text/css" href = "css/pat.css">
+	<link rel = "stylesheet" type = "text/css" href = "css/collapsible.css">
+	<title>Spellcard fill help</title>
+</head>
+<body>
+	<div class = "pageContainer">
+		<div class = "navContainer">
+			<a href = "index.html">&lt; Back to home</a>
+		</div>
+
+		<div>
+			<form id = "userForm">
+				<button type = "submit" disabled style = "display: none" aria-hidden = "true"></button>
+				<div class = "collapsible">
+					<button type = "button" class = "collapsibleButton" onclick = "toggleCollapse('parserbullshit')" id = "button_parserbullshit">Parser</button>
+					<div class = "hidden" id = "parserbullshit" style = "border: 1px solid black">
+						<textarea name = "parsing_field" id = "parsing_field" rows = "10" cols = "80"></textarea>
+						<p style = "text-align: center; width: 100%;" id = "parse_output">Output</p>
+						<div class = "controlContainer">
+							<span style = "margin: 15px auto">
+								<button type = "button" form = "userForm" onclick = "parseTable(1, 6)">First 6 columns</button>
+								<button type = "button" form = "userForm" onclick = "parseTable(7, 3, 1, 1)">Last 3 columns (Ignore 1r1c)</button>
+								<button type = "button" form = "userForm" onclick = "specialParse()">Parse Table3 GP</button>
+							</span>
+						</div>
+						<p style = "text-align: center; width: 100%;">Custom parsing</p>
+						<div class = "controlContainer">
+							<span style = "margin: 15px auto">
+								<label for = "colStart">Start at</label>
+								<input type = "number" placeholder = "column" name = "colStart" id = "colStart">
+							</span>
+							<span style = "margin: 15px auto">
+								<label for = "colCount">Columns</label>
+								<input type = "number" placeholder = "amount" name = "colCount" id = "colCount">
+							</span>
+							<span style = "margin: 15px auto">
+								<label for = "rowIgnore">Ignore row</label>
+								<input type = "number" placeholder = "ignore row" name = "rowIgnore" id = "rowIgnore">
+							</span>
+							<span style = "margin: 15px auto">
+								<label for = "colIgnore">Ignore column</label>
+								<input type = "number" placeholder = "ignore col" name = "colIgnore" id = "colIgnore">
+							</span>
+							<span style = "margin: 15px auto">
+								<button type = "button" onclick = "parseAuto()">Parse</button>
+							</span>
+						</div>
+					</div>
+				</div>
+				<input type = "text" name = "spellName" id = "spellName" class = "inputBig" placeholder="Spellcard Name">
+				<table class = "displayTable" id = "spellTable">
+					<thead></thead>
+					<tbody>
+						<tr class = "columnLabel">
+							<td>Element</td>
+							<td>Target</td>
+							<td>Name</td>
+							<td>Count</td>
+							<td>Yin / Yang</td>
+							<td>Spirit Points</td>
+							<td>Pow</td>
+							<td>Accuracy</td>
+							<td>Crit Chance</td>
+							<td>Bullet Type</td>
+						</tr>
+						<tr id = "line1" class = "table_inputLine ele_blank">
+							<td>
+								<select id = "ele_line1" class = "ele_selection">
+									<option value = "blank" style = "background-color:white;color:black;font-weight:normal;"></option>
+									<option value = "noEle" style = "background-color:gray;color:white;font-weight:normal;">Traitless</option>
+									<option value = "fire" style = "background-color:#CC372B;color:white;font-weight:normal;">Fire</option>
+									<option value = "water" style = "background-color:#2FADA9;color:white;font-weight:normal;">Water</option>
+									<option value = "wood" style = "background-color:#5BA33F;color:white;font-weight:normal;">Wood</option>
+									<option value = "metal" style = "background-color:#CA9D2B;color:white;font-weight:normal;">Metal</option>
+									<option value = "earth" style = "background-color:#905527;color:white;font-weight:normal;">Earth</option>
+									<option value = "sun" style = "background-color:#D0B146;color:white;font-weight:normal;">Sun</option>
+									<option value = "moon" style = "background-color:#775C93;color:white;font-weight:normal;">Moon</option>
+									<option value = "star" style = "background-color:#AE9C76;color:white;font-weight:normal;">Star</option>
+								</select>
+							</td>
+							<td>
+								<input type = "text" name = "target_line1" id = "target_line1" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "name_line1" id = "name_line1" class = "longInput">
+							</td>
+							<td>
+								<input type = "number" name = "count_line1" id = "count_line1" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "yinyang_line1" id = "yinyang_line1" class = "shortInput">
+							</td>
+							<td id = "line1_spcount">
+								<input type = "number" name = "sp_line1" id = "sp_line1" min = "0" max = "3" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "pow_line1" id = "pow_line1" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "acc_line1" id = "acc_line1" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "crit_line1" id = "crit_line1" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "bullettype_line1" id = "bullettype_line1" class = "mediumInput">
+							</td>
+						</tr>
+						<tr id = "line2" class = "table_inputLine ele_blank">
+							<td>
+								<select id = "ele_line2" class = "ele_selection">
+									<option value = "blank" style = "background-color:white;color:black;font-weight:normal;"></option>
+									<option value = "noEle" style = "background-color:gray;color:white;font-weight:normal;">Traitless</option>
+									<option value = "fire" style = "background-color:#CC372B;color:white;font-weight:normal;">Fire</option>
+									<option value = "water" style = "background-color:#2FADA9;color:white;font-weight:normal;">Water</option>
+									<option value = "wood" style = "background-color:#5BA33F;color:white;font-weight:normal;">Wood</option>
+									<option value = "metal" style = "background-color:#CA9D2B;color:white;font-weight:normal;">Metal</option>
+									<option value = "earth" style = "background-color:#905527;color:white;font-weight:normal;">Earth</option>
+									<option value = "sun" style = "background-color:#D0B146;color:white;font-weight:normal;">Sun</option>
+									<option value = "moon" style = "background-color:#775C93;color:white;font-weight:normal;">Moon</option>
+									<option value = "star" style = "background-color:#AE9C76;color:white;font-weight:normal;">Star</option>
+								</select>
+							</td>
+							<td>
+								<input type = "text" name = "target_line2" id = "target_line2" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "name_line2" id = "name_line2" class = "longInput">
+							</td>
+							<td>
+								<input type = "number" name = "count_line2" id = "count_line2" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "yinyang_line2" id = "yinyang_line2" class = "shortInput">
+							</td>
+							<td id = "line2_spcount">
+								<input type = "number" name = "sp_line2" id = "sp_line2" min = "0" max = "3" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "pow_line2" id = "pow_line2" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "acc_line2" id = "acc_line2" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "crit_line2" id = "crit_line2" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "bullettype_line2" id = "bullettype_line2" class = "mediumInput">
+							</td>
+						</tr>
+						<tr id = "line3" class = "table_inputLine ele_blank">
+							<td>
+								<select id = "ele_line3" class = "ele_selection">
+									<option value = "blank" style = "background-color:white;color:black;font-weight:normal;"></option>
+									<option value = "noEle" style = "background-color:gray;color:white;font-weight:normal;">Traitless</option>
+									<option value = "fire" style = "background-color:#CC372B;color:white;font-weight:normal;">Fire</option>
+									<option value = "water" style = "background-color:#2FADA9;color:white;font-weight:normal;">Water</option>
+									<option value = "wood" style = "background-color:#5BA33F;color:white;font-weight:normal;">Wood</option>
+									<option value = "metal" style = "background-color:#CA9D2B;color:white;font-weight:normal;">Metal</option>
+									<option value = "earth" style = "background-color:#905527;color:white;font-weight:normal;">Earth</option>
+									<option value = "sun" style = "background-color:#D0B146;color:white;font-weight:normal;">Sun</option>
+									<option value = "moon" style = "background-color:#775C93;color:white;font-weight:normal;">Moon</option>
+									<option value = "star" style = "background-color:#AE9C76;color:white;font-weight:normal;">Star</option>
+								</select>
+							</td>
+							<td>
+								<input type = "text" name = "target_line3" id = "target_line3" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "name_line3" id = "name_line3" class = "longInput">
+							</td>
+							<td>
+								<input type = "number" name = "count_line3" id = "count_line3" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "yinyang_line3" id = "yinyang_line3" class = "shortInput">
+							</td>
+							<td id = "line3_spcount">
+								<input type = "number" name = "sp_line3" id = "sp_line3" min = "0" max = "3" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "pow_line3" id = "pow_line3" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "acc_line3" id = "acc_line3" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "crit_line3" id = "crit_line3" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "bullettype_line3" id = "bullettype_line3" class = "mediumInput">
+							</td>
+						</tr>
+						<tr id = "line4" class = "table_inputLine ele_blank">
+							<td>
+								<select id = "ele_line4" class = "ele_selection">
+									<option value = "blank" style = "background-color:white;color:black;font-weight:normal;"></option>
+									<option value = "noEle" style = "background-color:gray;color:white;font-weight:normal;">Traitless</option>
+									<option value = "fire" style = "background-color:#CC372B;color:white;font-weight:normal;">Fire</option>
+									<option value = "water" style = "background-color:#2FADA9;color:white;font-weight:normal;">Water</option>
+									<option value = "wood" style = "background-color:#5BA33F;color:white;font-weight:normal;">Wood</option>
+									<option value = "metal" style = "background-color:#CA9D2B;color:white;font-weight:normal;">Metal</option>
+									<option value = "earth" style = "background-color:#905527;color:white;font-weight:normal;">Earth</option>
+									<option value = "sun" style = "background-color:#D0B146;color:white;font-weight:normal;">Sun</option>
+									<option value = "moon" style = "background-color:#775C93;color:white;font-weight:normal;">Moon</option>
+									<option value = "star" style = "background-color:#AE9C76;color:white;font-weight:normal;">Star</option>
+								</select>
+							</td>
+							<td>
+								<input type = "text" name = "target_line4" id = "target_line4" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "name_line4" id = "name_line4" class = "longInput">
+							</td>
+							<td>
+								<input type = "number" name = "count_line4" id = "count_line4" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "yinyang_line4" id = "yinyang_line4" class = "shortInput">
+							</td>
+							<td id = "line4_spcount">
+								<input type = "number" name = "sp_line4" id = "sp_line4" min = "0" max = "3" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "pow_line4" id = "pow_line4" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "acc_line4" id = "acc_line4" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "crit_line4" id = "crit_line4" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "bullettype_line4" id = "bullettype_line4" class = "mediumInput">
+							</td>
+						</tr>
+						<tr id = "line5" class = "table_inputLine ele_blank">
+							<td>
+								<select id = "ele_line5" class = "ele_selection">
+									<option value = "blank" style = "background-color:white;color:black;font-weight:normal;"></option>
+									<option value = "noEle" style = "background-color:gray;color:white;font-weight:normal;">Traitless</option>
+									<option value = "fire" style = "background-color:#CC372B;color:white;font-weight:normal;">Fire</option>
+									<option value = "water" style = "background-color:#2FADA9;color:white;font-weight:normal;">Water</option>
+									<option value = "wood" style = "background-color:#5BA33F;color:white;font-weight:normal;">Wood</option>
+									<option value = "metal" style = "background-color:#CA9D2B;color:white;font-weight:normal;">Metal</option>
+									<option value = "earth" style = "background-color:#905527;color:white;font-weight:normal;">Earth</option>
+									<option value = "sun" style = "background-color:#D0B146;color:white;font-weight:normal;">Sun</option>
+									<option value = "moon" style = "background-color:#775C93;color:white;font-weight:normal;">Moon</option>
+									<option value = "star" style = "background-color:#AE9C76;color:white;font-weight:normal;">Star</option>
+								</select>
+							</td>
+							<td>
+								<input type = "text" name = "target_line5" id = "target_line5" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "name_line5" id = "name_line5" class = "longInput">
+							</td>
+							<td>
+								<input type = "number" name = "count_line5" id = "count_line5" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "yinyang_line5" id = "yinyang_line5" class = "shortInput">
+							</td>
+							<td id = "line5_spcount">
+								<input type = "number" name = "sp_line5" id = "sp_line5" min = "0" max = "3" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "pow_line5" id = "pow_line5" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "acc_line5" id = "acc_line5" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "crit_line5" id = "crit_line5" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "bullettype_line5" id = "bullettype_line5" class = "mediumInput">
+							</td>
+						</tr>
+						<tr id = "line6" class = "table_inputLine ele_blank">
+							<td>
+								<select id = "ele_line6" class = "ele_selection">
+									<option value = "blank" style = "background-color:white;color:black;font-weight:normal;"></option>
+									<option value = "noEle" style = "background-color:gray;color:white;font-weight:normal;">Traitless</option>
+									<option value = "fire" style = "background-color:#CC372B;color:white;font-weight:normal;">Fire</option>
+									<option value = "water" style = "background-color:#2FADA9;color:white;font-weight:normal;">Water</option>
+									<option value = "wood" style = "background-color:#5BA33F;color:white;font-weight:normal;">Wood</option>
+									<option value = "metal" style = "background-color:#CA9D2B;color:white;font-weight:normal;">Metal</option>
+									<option value = "earth" style = "background-color:#905527;color:white;font-weight:normal;">Earth</option>
+									<option value = "sun" style = "background-color:#D0B146;color:white;font-weight:normal;">Sun</option>
+									<option value = "moon" style = "background-color:#775C93;color:white;font-weight:normal;">Moon</option>
+									<option value = "star" style = "background-color:#AE9C76;color:white;font-weight:normal;">Star</option>
+								</select>
+							</td>
+							<td>
+								<input type = "text" name = "target_line6" id = "target_line6" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "name_line6" id = "name_line6" class = "longInput">
+							</td>
+							<td>
+								<input type = "number" name = "count_line6" id = "count_line6" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "yinyang_line6" id = "yinyang_line6" class = "shortInput">
+							</td>
+							<td id = "line6_spcount">
+								<input type = "number" name = "sp_line6" id = "sp_line6" min = "0" max = "3" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "pow_line6" id = "pow_line6" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "acc_line6" id = "acc_line6" class = "shortInput">
+							</td>
+							<td>
+								<input type = "number" name = "crit_line6" id = "crit_line6" class = "shortInput">
+							</td>
+							<td>
+								<input type = "text" name = "bullettype_line6" id = "bullettype_line6" class = "mediumInput">
+							</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan = "10">
+								<button type = "button" onclick = "toJson()">to JSON</button>
+							</td>
+						</tr>
+						<tr>
+							<td colspan = "10">
+								<textarea rows="10" cols="80" id="jsondata"></textarea>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</form>
+		</div>
+	</div>
+	<script src = "js/spellcard_help.js"></script>
+	<script src = "js/collapsible.js"></script>
+	<script>
+		document.getElementById("button_parserbullshit").click();
+	</script>
+</body>
