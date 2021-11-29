@@ -1,6 +1,29 @@
 const listClass = ["fire", "water", "wood", "metal", "earth", "sun", "moon", "star", "non", "blank"];
 let specialProperty = [[], [], [], [], [], []];
 
+function download(){
+	let data = document.getElementById("jsondata").value;
+	let filename = "untitled.json";
+	let type = "text/json";
+	let file = new Blob([data], {type: type});
+	//IE Bullshit
+	if (window.navigator.msSaveOrOpenBlob)
+		window.navigator.msSaveOrOpenBlob(file, filename);
+	else {
+		//Anything else, somehow doesn't work for fucking Safari
+		var downloadObj = document.createElement("a"),
+			url = URL.createObjectURL(file);
+		downloadObj.href = url;
+		downloadObj.download = filename;
+		document.body.appendChild(downloadObj);
+		downloadObj.click();
+		setTimeout(function() {
+			document.body.removeChild(downloadObj);
+			window.URL.revokeObjectURL(url);
+		}, 0);
+	}
+}
+
 function applyClass(ele, className){
 	for (let name of listClass){
 		if (name == className){
