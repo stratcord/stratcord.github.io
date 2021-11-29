@@ -219,6 +219,7 @@ function specialParse(){
 					break;
 			}
 		}
+		document.getElementById("parse_output").innerHTML = "Success!";
 	} catch (err) {
 		document.getElementById("parse_output").innerHTML = err;
 	}
@@ -261,6 +262,112 @@ function toJson(){
 	}
 	document.getElementById("jsondata").value = JSON.stringify(newObj, null, 2);
 	return newObj;
+}
+
+function computeLine(layoutObj, lineNum = undefined){
+	try {
+		if (lineNum == 1) return 0;
+		let layout = layoutObj.slice();
+		let curLine = 1, cur = 0;
+		let fullLayout = [0, 0, 0, 0, 0, 0];
+		while (curLine < 6 && layout.length > 0){
+			let m = layout.shift();
+			cur += 1;
+			while (m > 0) {
+				fullLayout[curLine] = cur;
+				curLine += 1;
+				if (curLine >= 6) return (typeof(lineNum) == "undefined") ? fullLayout : fullLayout[lineNum];
+				m -= 1;
+			}
+		}
+		return (typeof(lineNum) == "undefined") ? fullLayout : fullLayout[lineNum];
+	} catch (err) {
+		document.getElementById("parse_output").innerHTML = err;
+	}
+}
+
+function jsonParse(){
+	try {
+		let jsonValue = document.getElementById("parsing_field").value;
+		let jsonObj = JSON.parse(jsonValue);
+		document.getElementById("spellName").value = jsonObj.name ?? "";
+		let bul_layout = computeLine(jsonObj.bullet_layout ?? []);
+		for (let i = 1; i <= 6; i++){
+			let changedline = document.getElementById("line" + i);
+			switch (jsonObj.bullets[i-1].element ?? ""){
+				case "Traitless":
+					changedline.children[0].children[0].value = "noEle";
+					applyClass(changedline, "non");
+					break;
+				case "Fire":
+					changedline.children[0].children[0].value = "fire";
+					applyClass(changedline, "fire");
+					break;
+				case "Water":
+					changedline.children[0].children[0].value = "water";
+					applyClass(changedline, "water");
+					break;
+				case "Wood":
+					changedline.children[0].children[0].value = "wood";
+					applyClass(changedline, "wood");
+					break;
+				case "Metal":
+					changedline.children[0].children[0].value = "metal";
+					applyClass(changedline, "metal");
+					break;
+				case "Earth":
+					changedline.children[0].children[0].value = "earth";
+					applyClass(changedline, "earth");
+					break;
+				case "Sun":
+					changedline.children[0].children[0].value = "sun";
+					applyClass(changedline, "sun");
+					break;
+				case "Moon":
+					changedline.children[0].children[0].value = "moon";
+					applyClass(changedline, "moon");
+					break;
+				case "Star":
+					changedline.children[0].children[0].value = "star";
+					applyClass(changedline, "star");
+					break;
+				default:
+					changedline.children[0].children[0].value = "blank";
+					applyClass(changedline, "blank");
+					break;
+			}
+			changedline.children[1].children[0].value = jsonObj.target ?? "";
+			changedline.children[2].children[0].value = jsonObj.bullets[i-1].name ?? "";
+			changedline.children[3].children[0].value = jsonObj.bullets[i-1].amount ?? "";
+			changedline.children[4].children[0].value = jsonObj.bullets[i-1].atktype ?? "";
+			changedline.children[5].children[0].value = bul_layout[i-1];
+			if (bul_layout[i-1] == 0) {
+				document.getElementById("sp_line" + i).style = "color: black; background-color: gray";
+				document.getElementById("sp_line" + i).parentNode.style = "color: black; background-color: gray";
+				document.getElementById("sp_line" + i).value = 0;
+			} else if (bul_layout[i-1] == 1) {
+				document.getElementById("sp_line" + i).style = "color: black; background-color: yellow";
+				document.getElementById("sp_line" + i).parentNode.style = "color: black; background-color: yellow";
+			} else if (bul_layout[i-1] == 2) {
+				document.getElementById("sp_line" + i).style = "color: black; background-color: orange";
+				document.getElementById("sp_line" + i).parentNode.style = "color: black; background-color: orange";
+			} else if (bul_layout[i-1] == 3) {
+				document.getElementById("sp_line" + i).style = "color: black; background-color: red";
+				document.getElementById("sp_line" + i).parentNode.style = "color: black; background-color: red";
+			} else {
+				document.getElementById("sp_line" + i).style = "";
+				document.getElementById("sp_line" + i).parentNode.style = "";
+			}
+			changedline.children[6].children[0].value = jsonObj.bullets[i-1].pow ?? "";
+			changedline.children[7].children[0].value = jsonObj.bullets[i-1].acc ?? "";
+			changedline.children[8].children[0].value = jsonObj.bullets[i-1].crit ?? "";
+			changedline.children[9].children[0].value = jsonObj.bullets[i-1].bullettype ?? "";
+			specialProperty[i-1] = jsonObj.bullets[i-1].properties;
+		}
+		document.getElementById("parse_output").innerHTML = "JSON loaded!";
+	} catch (err) {
+		document.getElementById("parse_output").innerHTML = err;
+	}
 }
 
 cellColorListener();

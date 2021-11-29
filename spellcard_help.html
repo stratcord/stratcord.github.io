@@ -21,6 +21,11 @@
 						<p style = "text-align: center; width: 100%;" id = "parse_output">Output</p>
 						<div class = "controlContainer">
 							<span style = "margin: 15px auto">
+								<button type = "button" form = "userForm" onclick = "jsonParse()">parse from JSON</button>
+							</span>
+						</div>
+						<div class = "controlContainer">
+							<span style = "margin: 15px auto">
 								<button type = "button" form = "userForm" onclick = "parseTable(1, 6)">First 6 columns</button>
 								<button type = "button" form = "userForm" onclick = "parseTable(7, 3, 1, 1)">Last 3 columns (Ignore 1r1c)</button>
 								<button type = "button" form = "userForm" onclick = "specialParse()">Parse Table3 GP</button>
