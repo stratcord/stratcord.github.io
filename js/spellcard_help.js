@@ -2,6 +2,7 @@ const listClass = ["fire", "water", "wood", "metal", "earth", "sun", "moon", "st
 let specialProperty = [[], [], [], [], [], []];
 
 function download(){
+	toJson();
 	let data = document.getElementById("jsondata").value;
 	let filename = "untitled.json";
 	let type = "text/json";
