@@ -551,7 +551,7 @@ function parseDescription(){
 							target = last_target;
 							stats_list.push("");
 							for (let token of tokens){
-								if (token != "UP" && token != "DOWN")
+								if (token != "UP" && token != "DOWN" && token != "targets'")
 									stats_list[stats_list.length-1] += token + " ";
 							}
 							stats_list[stats_list.length-1] = stats_list[stats_list.length-1].trim();
@@ -563,7 +563,7 @@ function parseDescription(){
 							stats_list.push("");
 							for (let ind in tokens){
 								if (ind == 0) continue;
-								if (tokens[ind] != "UP" && tokens[ind] != "DOWN")
+								if (tokens[ind] != "UP" && tokens[ind] != "DOWN" && tokens[ind] != "targets'")
 									stats_list[stats_list.length-1] += tokens[ind] + " ";
 							}
 							stats_list[stats_list.length-1] = stats_list[stats_list.length-1].trim();
