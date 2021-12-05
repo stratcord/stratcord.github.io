@@ -1,5 +1,15 @@
 const listClass = ["fire", "water", "wood", "metal", "earth", "sun", "moon", "star", "non", "blank"];
 let specialProperty = [[], [], [], [], [], []];
+const gp_target = {"self": "Self", "party": "Team", "target": "Target",
+	"all": "All", "party's": "Team", "target's": "Target", "own": "Self"};
+let characterScale_pre = ""; //Boost / Awk
+let boost_scale_pre = [[], [], [], []];
+let awk_scale_pre = [[], [], [], [], []];
+let characterScale_post = ""; //Boost / Awk
+let boost_scale_post = [[], [], [], []];
+let awk_scale_post = [[], [], [], [], []];
+let preList = [];
+let postList = [];
 
 function download(){
 	toJson();
@@ -170,7 +180,7 @@ function parseTable(colBegin, colNum, ignoreRow = 0, ignoreCol = 0) {
 		document.getElementById("parse_output").innerHTML = "Success!";
 	}
 	catch (err) {
-		document.getElementById("parse_output").innerHTML = err;
+		document.getElementById("parse_output").innerHTML = "parseTable(): " + err;
 	}
 }
 
@@ -245,7 +255,7 @@ function specialParse(){
 		}
 		document.getElementById("parse_output").innerHTML = "Success!";
 	} catch (err) {
-		document.getElementById("parse_output").innerHTML = err;
+		document.getElementById("parse_output").innerHTML = "specialParse(): " + err;
 	}
 }
 
@@ -254,6 +264,18 @@ let baseObj = {"id":"","name":"","target":"","awk_multiplier":[],"bullet_layout"
 function toJson(){
 	let newObj = JSON.parse(JSON.stringify(baseObj));
 	newObj.name = document.getElementById("spellName").value.trim();
+	awk_scale_pre = {"scaling":"Awakening","effects":[{"awakening": 1,"effect":[]},{"awakening": 2,"effect":[]},{"awakening": 3,"effect":[]},{"awakening": 4,"effect":[]},{"awakening": 5,"effect":[]}]};
+	awk_scale_post = {"scaling":"Awakening","effects":[{"awakening": 1,"effect":[]},{"awakening": 2,"effect":[]},{"awakening": 3,"effect":[]},{"awakening": 4,"effect":[]},{"awakening": 5,"effect":[]}]};
+	for (let i in preList){
+		let data = toData(preList[i]);
+		for (let j in data)
+			awk_scale_pre.effects[j].effect.push(data[j]); 
+	}
+	for (let i in postList){
+		let data = toData(postList[i]);
+		for (let j in data)
+			awk_scale_post.effects[j].effect.push(data[j]); 
+	}
 	let lastValueSP = "0";
 	let lineCount = 1;
 	for (let i = 1; i <= 6; i++){
@@ -284,6 +306,8 @@ function toJson(){
 		newObj.bullets[i-1].bullettype = line.children[9].children[0].value.trim();
 		newObj.bullets[i-1].properties = specialProperty[i-1];
 	}
+	newObj.pre = awk_scale_pre;
+	newObj.post = awk_scale_post;
 	document.getElementById("jsondata").value = JSON.stringify(newObj, null, 2);
 	return newObj;
 }
@@ -306,7 +330,7 @@ function computeLine(layoutObj, lineNum = undefined){
 		}
 		return (typeof(lineNum) == "undefined") ? fullLayout : fullLayout[lineNum];
 	} catch (err) {
-		document.getElementById("parse_output").innerHTML = err;
+		document.getElementById("parse_output").innerHTML = "toJson(): " + err;
 	}
 }
 
@@ -390,8 +414,350 @@ function jsonParse(){
 		}
 		document.getElementById("parse_output").innerHTML = "JSON loaded!";
 	} catch (err) {
-		document.getElementById("parse_output").innerHTML = err;
+		document.getElementById("parse_output").innerHTML = "jsonParse(): " + err;
 	}
 }
+
+const formatHTML = "<table class=\"displayTable seperator\" id=\"{0}{1}\"><thead></thead><tbody><tr class=\"columnLabel\"><td>Awakening</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr><tr class=\"table_inputLine\"><td>Value</td><td><input type=\"number\" name=\"{0}{1}_value1\" id=\"{0}{1}_value1\" class=\"shortInput\"></td><td><input type=\"number\" name=\"{0}{1}_value2\" id=\"{0}{1}_value2\" class=\"shortInput\"></td><td><input type=\"number\" name=\"{0}{1}_value3\" id=\"{0}{1}_value3\" class=\"shortInput\"></td><td><input type=\"number\" name=\"{0}{1}_value4\" id=\"{0}{1}_value4\" class=\"shortInput\"></td><td><input type=\"number\" name=\"{0}{1}_value5\" id=\"{0}{1}_value5\" class=\"shortInput\"></td></tr><tr class=\"table_inputLine\"><td>Rate</td><td><input type=\"number\" name=\"{0}{1}_rate1\" id=\"{0}{1}_rate1\" class=\"shortInput\"></td><td><input type=\"number\" name=\"{0}{1}_rate2\" id=\"{0}{1}_rate2\" class=\"shortInput\"></td><td><input type=\"number\" name=\"{0}{1}_rate3\" id=\"{0}{1}_rate3\" class=\"shortInput\"></td><td><input type=\"number\" name=\"{0}{1}_rate4\" id=\"{0}{1}_rate4\" class=\"shortInput\"></td><td><input type=\"number\" name=\"{0}{1}_rate5\" id=\"{0}{1}_rate5\" class=\"shortInput\"></td></tr><tr class=\"table_inputLine\"><td>Add</td><td><input type=\"number\" name=\"{0}{1}_add1\" id=\"{0}{1}_add1\" class=\"shortInput\"></td><td><input type=\"number\" name=\"{0}{1}_add2\" id=\"{0}{1}_add2\" class=\"shortInput\"></td><td><input type=\"number\" name=\"{0}{1}_add3\" id=\"{0}{1}_add3\" class=\"shortInput\"></td><td><input type=\"number\" name=\"{0}{1}_add4\" id=\"{0}{1}_add4\" class=\"shortInput\"></td><td><input type=\"number\" name=\"{0}{1}_add5\" id=\"{0}{1}_add5\" class=\"shortInput\"></td></tr></tbody><tfoot><tr class=\"table_inputLine\"><td colspan=\"6\" id=\"{0}{1}_effect\"></td></tr><tr class=\"table_inputLine\"><td>Duration:</td><td colspan=\"4\"><input type=\"number\" name=\"{0}{1}_duration\" id=\"{0}{1}_duration\" placeholder=\"Duration\"></td><td>turn(s)</td></tr></tfoot></table>";
+
+function removeAllPre(){
+	document.getElementById("preContainer").classList.add("hidden");
+	for (let i = 0; i <= 9; i++){
+		try {
+			document.getElementById("pre"+i).remove();
+			document.getElementById("preContainer").children[0].children[i-1].classList.add("hidden");
+		} catch (err) {
+			//console.log("pre", i, err);
+		}
+	}
+}
+
+function removeAllPost(){
+	document.getElementById("postContainer").classList.add("hidden");
+	for (let i = 0; i <= 9; i++){
+		try {
+			document.getElementById("post"+i).remove();
+			document.getElementById("postContainer").children[0].children[i-1].classList.add("hidden");
+		} catch (err) {
+			//console.log("post", i, err);
+		}
+	}
+}
+
+if (!String.prototype.format) {
+	String.prototype.format = function() {
+		let args = arguments;
+		return this.replace(/{(\d+)}/g, function(match, number) { 
+			return typeof args[number] != 'undefined' ? args[number] : match;
+		});
+	};
+}
+
+function setPre(amount){
+	removeAllPre();
+	preList = [];
+	if (amount > 0) document.getElementById("preContainer").classList.remove("hidden");
+	for (let i = 1; i <= amount; i++){
+		document.getElementById("userForm").insertAdjacentHTML("beforeend", formatHTML.format("pre", i));
+		document.getElementById("pre"+i+"_effect").innerHTML = "Pre"+i;
+		document.getElementById("preContainer").children[0].children[i-1].classList.remove("hidden");
+		document.getElementById("preContainer").children[0].children[i-1].children[0].innerHTML = "Pre"+i;
+		preList.push("pre"+i);
+	}
+	for (let i = 0; i <= 3; i++){
+		boost_scale_pre[i] = [];
+		for (let j = 0; j < amount; j++){
+			boost_scale_pre[i].push({});
+		}
+	}
+	for (let i = 0; i <= 4; i++){
+		awk_scale_pre[i] = [];
+		for (let j = 0; j < amount; j++){
+			awk_scale_pre[i].push({});
+		}
+	}
+	characterScale_pre = "";
+}
+
+function setPost(amount){
+	removeAllPost();
+	postList = [];
+	if (amount > 0) document.getElementById("postContainer").classList.remove("hidden");
+	for (let i = 1; i <= amount; i++){
+		document.getElementById("userForm").insertAdjacentHTML("beforeend", formatHTML.format("post", i));
+		document.getElementById("post"+i+"_effect").innerHTML = "Post"+i;
+		document.getElementById("postContainer").children[0].children[i-1].classList.remove("hidden");
+		document.getElementById("postContainer").children[0].children[i-1].children[0].innerHTML = "Post"+i;
+		postList.push("post"+i);
+	}
+	for (let i = 0; i <= 3; i++){
+		boost_scale_post[i] = [];
+		for (let j = 0; j < amount; j++){
+			boost_scale_post[i].push({});
+		}
+	}
+	for (let i = 0; i <= 4; i++){
+		awk_scale_post[i] = [];
+		for (let j = 0; j < amount; j++){
+			awk_scale_post[i].push({});
+		}
+	}
+	characterScale_post = "";
+}
+
+function parseDescription(){
+	try {
+		setPre(0);
+		setPost(0);
+		let desc = document.getElementById("parsing_field").value;
+		let lines = desc.split("\n");
+		if (!lines[0].startsWith("[")){
+			document.getElementById("spellName").value = lines[0];
+		}
+		let hasPre = false, hasPost = false;
+		for (line of lines){
+			if (line.startsWith("[Pre-Attack]")){
+				hasPre = true;
+				let parseEffect = line.slice("[Pre-Attack]".length).trim().slice(0, -1);
+				let effects = parseEffect.replaceAll("&", "/").split("/");
+				setPre(effects.length);
+				let last_target = "";
+				let stats_list = [];
+				let up_down = "";
+				let startList = -1;
+				for (let i in effects){
+					effects[i] = effects[i].trim();
+					if (effects[i].toLowerCase().startsWith("inflicts")){
+						let target = gp_target[effects[i].split("to")[1].trim().split(" ")[0]];
+						let anomaly_type = effects[i].split(":")[1].trim().split(" ")[0];
+						document.getElementById("pre" + (Number(i)+1) + "_effect").innerHTML += ": " + target + " " + anomaly_type;
+						document.getElementById("preContainer").children[0].children[i].children[0].innerHTML += ": " + target + " " + anomaly_type;
+					} else if (effects[i].toLowerCase().startsWith("restores")){
+						let target = gp_target[effects[i].split(" ")[1]];
+						document.getElementById("pre" + (Number(i)+1) + "_effect").innerHTML += ": " + target + " barrier";
+						document.getElementById("preContainer").children[0].children[i].children[0].innerHTML += ": " + target + " barrier";
+					} else if (effects[i].toLowerCase().startsWith("recovers")){
+						let target = gp_target[effects[i].split(" ")[1]];
+						document.getElementById("pre" + (Number(i)+1) + "_effect").innerHTML += ": " + target + " hp";
+						document.getElementById("preContainer").children[0].children[i].children[0].innerHTML += ": " + target + " hp";
+					} else if (effects[i].toLowerCase().startsWith("heals")){
+						//Kokoro when...
+					} else {
+						//Do the target thing
+						let tokens = effects[i].split(" ");
+						let target = "";
+						for (let ind in tokens) tokens[ind] = tokens[ind].trim();
+						if (typeof(gp_target[tokens[0].toLowerCase()]) === "undefined"){
+							target = last_target;
+							stats_list.push("");
+							for (let token of tokens){
+								if (token != "UP" && token != "DOWN")
+									stats_list[stats_list.length-1] += token + " ";
+							}
+							stats_list[stats_list.length-1] = stats_list[stats_list.length-1].trim();
+						} else {
+							startList = Number(i)+1;
+							stats_list = [];
+							target = gp_target[tokens[0].toLowerCase()];
+							last_target = target;
+							stats_list.push("");
+							for (let ind in tokens){
+								if (ind == 0) continue;
+								if (tokens[ind] != "UP" && tokens[ind] != "DOWN")
+									stats_list[stats_list.length-1] += tokens[ind] + " ";
+							}
+							stats_list[stats_list.length-1] = stats_list[stats_list.length-1].trim();
+						}
+						if (tokens[tokens.length-1] == "UP" || tokens[tokens.length-1] == "DOWN"){
+							up_down = tokens[tokens.length-1];
+							for (let ind = startList; ind < startList + stats_list.length; ind++){
+								document.getElementById("pre" + (Number(ind)) + "_effect").innerHTML += ": " + target + " " + stats_list[ind-startList];
+								document.getElementById("preContainer").children[0].children[Number(ind)-1].children[0].innerHTML += ": " + target + " " + stats_list[ind-startList];
+							}
+						}
+						last_target = target;
+					}
+				}
+			}
+			if (line.startsWith("[Post-Attack]")){
+				hasPost = true;
+				let parseEffect = line.slice("[Post-Attack]".length).trim().slice(0, -1);
+				let effects = parseEffect.replaceAll("&", "/").split("/");
+				setPost(effects.length);
+				let last_target = "";
+				let stats_list = [];
+				let up_down = "";
+				let startList = -1;
+				for (let i in effects){
+					effects[i] = effects[i].trim();
+					if (effects[i].toLowerCase().startsWith("inflicts")){
+						let target = gp_target[effects[i].split("to")[1].trim().split(" ")[0]];
+						let anomaly_type = effects[i].split(":")[1].trim().split(" ")[0];
+						document.getElementById("post" + (Number(i)+1) + "_effect").innerHTML += ": " + target + " " + anomaly_type;
+						document.getElementById("postContainer").children[0].children[i].children[0].innerHTML += ": " + target + " " + anomaly_type;
+					} else if (effects[i].toLowerCase().startsWith("restores")){
+						let target = gp_target[effects[i].split(" ")[1]];
+						document.getElementById("post" + (Number(i)+1) + "_effect").innerHTML += ": " + target + " barrier";
+						document.getElementById("postContainer").children[0].children[i].children[0].innerHTML += ": " + target + " barrier";
+					} else if (effects[i].toLowerCase().startsWith("recovers")){
+						let target = gp_target[effects[i].split(" ")[1]];
+						document.getElementById("post" + (Number(i)+1) + "_effect").innerHTML += ": " + target + " hp";
+						document.getElementById("postContainer").children[0].children[i].children[0].innerHTML += ": " + target + " hp";
+					} else if (effects[i].toLowerCase().startsWith("heals")){
+						//Kokoro when...
+					} else {
+						//Do the target thing
+						let tokens = effects[i].split(" ");
+						let target = "";
+						for (let ind in tokens) tokens[ind] = tokens[ind].trim();
+						if (typeof(gp_target[tokens[0].toLowerCase()]) === "undefined"){
+							target = last_target;
+							stats_list.push("");
+							for (let token of tokens){
+								if (token != "UP" && token != "DOWN")
+									stats_list[stats_list.length-1] += token + " ";
+							}
+							stats_list[stats_list.length-1] = stats_list[stats_list.length-1].trim();
+						} else {
+							startList = Number(i)+1;
+							stats_list = [];
+							target = gp_target[tokens[0].toLowerCase()];
+							last_target = target;
+							stats_list.push("");
+							for (let ind in tokens){
+								if (ind == 0) continue;
+								if (tokens[ind] != "UP" && tokens[ind] != "DOWN")
+									stats_list[stats_list.length-1] += tokens[ind] + " ";
+							}
+							stats_list[stats_list.length-1] = stats_list[stats_list.length-1].trim();
+						}
+						if (tokens[tokens.length-1] == "UP" || tokens[tokens.length-1] == "DOWN"){
+							up_down = tokens[tokens.length-1];
+							for (let ind = startList; ind < startList + stats_list.length; ind++){
+								document.getElementById("post" + (Number(ind)) + "_effect").innerHTML += ": " + target + " " + stats_list[ind-startList];
+								document.getElementById("postContainer").children[0].children[Number(ind)-1].children[0].innerHTML += ": " + target + " " + stats_list[ind-startList];
+							}
+						}
+						last_target = target;
+					}
+				}
+			}
+		}
+		document.getElementById("parse_output").innerHTML = "Success!";
+	} catch (err) {
+		document.getElementById("parse_output").innerHTML = "parseDescription(): " + err;
+	}
+}
+
+const stat_change_schema={"Yin ATK":{"type":"Normal","value":"Yin ATK"},"Yang ATK":{"type":"Normal","value":"Yang ATK"},"Yin DEF":{"type":"Normal","value":"Yin DEF"},"Yang ATK":{"type":"Normal","value":"Yang DEF"},"Agility":{"type":"Normal","value":"Agility"},"Accuracy":{"type":"Combat","value":"Accuracy"},"Evasion":{"type":"Combat","value":"Evasion"},"CRIT ATK":{"type":"Combat","value":"CRIT ATK"},"CRIT DEF":{"type":"Combat","value":"CRIT DEF"},"CRIT Accuracy":{"type":"Combat","value":"CRIT Accuracy"},"CRIT Evasion":{"type":"Combat","value":"CRIT Evasion"},"Focus":{"type":"Combat","value":"Focus"}};
+const stat_change_json={"stat":{},"target":"","value":[],"duration":0};
+const inflict_anomaly_schema={"Burn":"Burn","Poison":"Poison","Freeze":"Freeze","Blind":"Blind","Paralyze":"Paralyze"};
+const inflict_anomaly_json = {"anomaly":"","target":"","value":[],"duration":0};
+const resource_gain_schema={"Spirit Power":"Spirit Points","hp":"HP","barrier":"Barrier"};
+const resource_gain_json={"resource":"","target":"","value":0};
+//heal anomaly missing lol
+
+function parseEffect(idPrefix){
+	try {
+		let data = document.getElementById("parsing_field").value;
+		data = data.split("\n");
+		for (let row of data){
+			let tokens = row.split("\t");
+			if (tokens[0] != "Card Level" && tokens[0] != "1"){
+				for (let i = 1; i <= 5; i++) document.getElementById(idPrefix + "_" + tokens[0].toLowerCase() + i).value = tokens[i];
+			}
+		}
+		document.getElementById("parse_output").innerHTML = "Success!";
+	} catch (err) {
+		document.getElementById("parse_output").innerHTML = "parseEffect(): " + err;
+	}
+}
+
+function toData(idPrefix){
+	let effect_values = [];
+	let effect_rates = [];
+	let effect_adds = [];
+
+	for (let i = 1; i <= 5; i++){
+		effect_values.push(Number(document.getElementById(idPrefix + "_value" + i).value));
+		effect_rates.push(Number(document.getElementById(idPrefix + "_rate" + i).value));
+		effect_adds.push(Number(document.getElementById(idPrefix + "_add" + i).value));
+	}
+
+	let effect = document.getElementById(idPrefix + "_effect").innerHTML;
+	effect = effect.split(": ")[1];
+
+	let target = effect.split(" ")[0];
+	effect = effect.substr(effect.indexOf(" ")+1);
+
+	let duration = Number(document.getElementById(idPrefix + "_duration").value);
+
+	if (effect_values[0] == 0 && effect_rates[0] == 0 && effect_adds[0] == 0){
+		return ["Scaled with boost", "Scaled with boost", "Scaled with boost",
+			"Scaled with boost", "Scaled with boost"];
+	}
+
+	// Modifying 
+	if (stat_change_schema[effect]){
+		let returned_effect = JSON.parse(JSON.stringify(stat_change_json));
+		returned_effect.stat = stat_change_schema[effect];
+		returned_effect.target = target;
+		returned_effect.duration = duration;
+		let allValue = [];
+		for (let i = 0; i < 5; i++){
+			allValue.push(JSON.parse(JSON.stringify(returned_effect)));
+			if (effect_rates[i] == 0){
+				allValue[i].value.push({"value": effect_values[i], "chance": 1});
+			} else {
+				allValue[i].value.push({"value": effect_values[i], "chance": (100 - effect_rates[i])/100});
+				allValue[i].value.push({"value": effect_values[i] + effect_adds[i], "chance": effect_rates[i]/100});
+			}
+		}
+		console.log(allValue);
+		return allValue;
+	} else if (inflict_anomaly_schema[effect]){
+		let returned_effect = JSON.parse(JSON.stringify(inflict_anomaly_json));
+		returned_effect.anomaly = inflict_anomaly_schema[effect];
+		returned_effect.target = target;
+		returned_effect.duration = duration;
+		let allValue = [];
+		for (let i = 0; i < 5; i++){
+			allValue.push(JSON.parse(JSON.stringify(returned_effect)));
+			if (effect_rates[i] == 0){
+				allValue[i].value.push({"value": effect_values[i], "chance": 1});
+			} else {
+				allValue[i].value.push({"value": effect_values[i], "chance": (100 - effect_rates[i])/100});
+				allValue[i].value.push({"value": effect_values[i] + effect_adds[i], "chance": effect_rates[i]/100});
+			}
+		}
+		console.log(allValue);
+		return allValue;
+	} else if (resource_gain_schema[effect]){
+		let returned_effect = JSON.parse(JSON.stringify(resource_gain_json));
+		returned_effect.resource = resource_gain_schema[effect];
+		returned_effect.target = target;
+		let allValue = [];
+		for (let i = 0; i < 5; i++){
+			allValue.push(JSON.parse(JSON.stringify(returned_effect)));
+			if (effect == "hp"){
+				effect_values[i] = Number((effect_values[i]/100).toFixed(2));
+			} else if (effect == "Spirit Points") {
+				if (effect_values[i] > 4) effect_values[i] = Number((effect_values[i]/20).toFixed(2));
+			} else if (effect == "barrier") {
+			} else {
+				document.getElementById("parse_output").innerHTML = "toData(): Unknown Effect.";
+			}
+			allValue[i].value = effect_values[i];
+		}
+	} else {
+		document.getElementById("parse_output").innerHTML = "toData(): Unknown Effect.";
+		return;
+	}
+}
+
+let test_data = "";
+//test_data = "Red Side: Alter Spark\n[Pre-Attack] Own Yin ATK UP.\n[Attack] Star Piercing Laser Bullet.\n[Bullet Layout] Mostly Yin.\n[Boost] Fire Own CRIT Accuracy UP Bullet/Star Own CRIT Accuracy UP Bullet/Fire Scarlet Devil Mansion-Killer Bullet.\n[Post-Attack] Inflicts Barrier Status: Burn to all targets.";
+
+document.getElementById("parsing_field").value = test_data;
 
 cellColorListener();
